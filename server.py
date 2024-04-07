@@ -26,7 +26,31 @@ def main():
     users.append(User("C", "C", 10))
     users.append(User("D", "D", 10))
     
+    # initialize socket object
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+    # binding socket to localhost
+    s.bind(('localhost', 12000))
+    # listen for incoming connections
+    s.listen(1)
+    
+    def handle_client(client_socket):
+        request = client_socket.recv(1024)
+        print("[*] Recieved %s" % request)
+        
+        # return a packet to the client
+        client_socket.send("Test Return to Client".encode())
+        
+        client_socket.close()
+    
+    while True:
+        client, addr = s.accept()
+        
+        print("[*] Accepted connection from: %s:%d" % (addr[0], addr[1]))
+        
+        # spin up our client thread to handle incoming data
+        client_handler = threading.Thread(target=handle_client, args=(client,))
+        client_handler.start()
 
 
 

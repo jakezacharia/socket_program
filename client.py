@@ -10,10 +10,10 @@ def main():
     
     ###### TESTING SECTION ######
     ## TESTING DATA TRANSFER TO SERVER
-    s.send("Test Data")
+    s.send("1111".encode())
     ## RECIEVE DATA FROM SERVER
     response = s.recv(1024)
-    print(response)
+    print(response.decode())
     ###### TESTING SECTION ######
     
     s.close()    
