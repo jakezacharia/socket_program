@@ -46,33 +46,35 @@ def main():
     
     
     def handle_client(client_socket):
-        request = client_socket.recv(1024)
-        print("[*] Received %s" % request)
-        
-        # decode the received data
-        data = pickle.loads(request)
-        
-        # extract the username and password from the data
-        username = data['username']
-        password = data['password']
-        
-        # check if the user exists
-        authenticated = False
-        for user in users:
-            if user.name == username and user.password == password:
-                authenticated = True
-                break
-        
-        if authenticated:
-            # send a success message back to the client
-            response = "Authentication successful"
-            client_socket.send(pickle.dumps(response))
-        else:
-            # send an error message back to the client and close the connection
-            response = "Authentication failed. Please try again."
-            client_socket.send(pickle.dumps(response))
-            client_socket.close()
-    
+        while True:
+            request = client_socket.recv(1024)
+            if not request:
+                break  # client disconnected
+
+            print("[*] Received %s" % request)
+            
+            # decode the received data
+            data = pickle.loads(request)
+            
+            # extract the username and password from the data
+            username = data['username']
+            password = data['password']
+            
+            # check if the user exists and the password is correct
+            user = None
+            for u in users:
+                if u.name == username and u.password == password:
+                    user = u
+                    break
+            
+            if user:
+                # send a success message back to the client along with the user's balance and transaction history
+                response = {"message": "Authentication successful", "balance": user.balance, "transactions": [str(t) for t in user.transactions]}
+                client_socket.send(pickle.dumps(response))
+            else:
+                # send an error message back to the client
+                response = {"message": "Authentication failed. Please try again."}
+                client_socket.send(pickle.dumps(response))    
     while True:
         client, addr = s.accept()
         
