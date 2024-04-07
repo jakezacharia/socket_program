@@ -4,9 +4,9 @@ import pickle
 
 def main():
     # server.py program will store two lists
-    # 1) list of users
+    # initialized list of users
     users = []
-    # 2) list of confirmed transactions (TXs)
+    # initialized list of confirmed transactions (TXs)
     confirmed_transactions = []
     
     # create user class that stores name, password, and current BTC balance
@@ -19,7 +19,8 @@ def main():
         def __str__(self):
             return self.name + " " + self.password + " " + str(self.balance)
         
-    #predefined users
+    # predefined users for testing
+    # for ease of use, we are setting usernames and passwords to be the same
     users.append(User("A", "A", 10))
     users.append(User("B", "B", 10))
     users.append(User("C", "C", 10))
