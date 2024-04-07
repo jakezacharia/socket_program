@@ -3,19 +3,28 @@ import threading
 import pickle
 
 def main():
-    # server.py program will store two lists
-    # initialized list of users
+    # initialize list of users and confirmed transactions
     users = []
-    # initialized list of confirmed transactions (TXs)
     confirmed_transactions = []
     
-    # create user class that stores name, password, and current BTC balance
+    # class definitions for transactions and users
+    class Transaction:
+        def __init__(self, sender, receivers, amount):
+            self.sender = sender
+            self.receivers = receivers
+            self.amount = amount
+
+        def __str__(self):
+            recievers_str = ", ".join(self.receivers)
+            return f"{self.sender} sent {self.amount} to {self.receivers}"
+
     class User:
         def __init__(self, name, password, balance):
             self.name = name
             self.password = password
             self.balance = balance
-            
+            self.transactions = []  # each user has a list of transactions
+
         def __str__(self):
             return self.name + " " + self.password + " " + str(self.balance)
         
@@ -34,14 +43,35 @@ def main():
     # listen for incoming connections
     s.listen(1)
     
+    
+    
     def handle_client(client_socket):
         request = client_socket.recv(1024)
-        print("[*] Recieved %s" % request)
+        print("[*] Received %s" % request)
         
-        # return a packet to the client
-        client_socket.send("Test Return to Client".encode())
+        # decode the received data
+        data = pickle.loads(request)
         
-        client_socket.close()
+        # extract the username and password from the data
+        username = data['username']
+        password = data['password']
+        
+        # check if the user exists
+        authenticated = False
+        for user in users:
+            if user.name == username and user.password == password:
+                authenticated = True
+                break
+        
+        if authenticated:
+            # send a success message back to the client
+            response = "Authentication successful"
+            client_socket.send(pickle.dumps(response))
+        else:
+            # send an error message back to the client and close the connection
+            response = "Authentication failed. Please try again."
+            client_socket.send(pickle.dumps(response))
+            client_socket.close()
     
     while True:
         client, addr = s.accept()

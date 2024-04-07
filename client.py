@@ -1,4 +1,5 @@
 import socket
+import pickle
 
 def main():
     
@@ -8,18 +9,25 @@ def main():
     # connect to server
     s.connect(('localhost', 12000))
     
-    ###### TESTING SECTION ######
-    ## TESTING DATA TRANSFER TO SERVER
-    s.send("1111".encode())
-    ## RECIEVE DATA FROM SERVER
-    response = s.recv(1024)
-    print(response.decode())
-    ###### TESTING SECTION ######
-    
-    s.close()    
-    
-    # create functions here to be called by client, acess server.py, and modify values
-    # in this case, we want to create functions for users to access the sever and send/recieve transactions of BTC
-    
+    # client wallet interface begins here
+    authenticated = False
+    while not authenticated:
+        # prompt user to enter username and password
+        username = input("Enter username: ")
+        password = input("Enter password: ")
+
+        # send authentication data to server
+        # pickle the data as a dictionary before sending
+        auth_data = pickle.dumps({"username": username, "password": password})
+        s.send(auth_data)
+
+        # receive response from server
+        response = pickle.loads(s.recv(1024))
+        if response == "Authentication successful":
+            print("Welcome to your wallet!")
+            authenticated = True
+        else:
+            print("User does not exist")
+            
 if __name__ == "__main__":
     main()
