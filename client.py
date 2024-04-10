@@ -111,7 +111,7 @@ def send_transaction(s, user, transaction):
             "tx_id": transaction["tx_id"],
             "status": transaction["status"]
         }))
-    elif transaction['status'] == 'failed':
+    elif transaction['status'] == 'rejected':
         # if the transaction failed, store the failed transaction history on client-side
         user.add_transaction(transaction)
        

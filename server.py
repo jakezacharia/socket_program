@@ -124,11 +124,15 @@ def main():
                                 }
                             payer.update_transaction_status(transaction['tx_id'], "rejected")
                         else:
+                            # if balance sufficient, update transaction
                             payer.balance -= transaction['amount_transferred']
                             payee1.balance += transaction['amount_received1']
                             if payee2:
                                 payee2.balance += transaction['amount_received2']
                             payer.add_transaction(transaction)
+                            payee1.add_transaction(transaction)
+                            if payee2:
+                                payee2.add_transaction(transaction)
                             response = {
                                 "status": "confirmed", 
                                 "balance": payer.balance,
