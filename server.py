@@ -120,7 +120,7 @@ def main():
                             response = {
                                 "status": "rejected", 
                                 "balance": payer.balance,
-                                "message": "Transaction rejected due to insufficient balance."
+                                "message": "Transaction rejected due to insufficient BTC balance."
                                 }
                             payer.update_transaction_status(transaction['tx_id'], "rejected")
                         else:
@@ -136,7 +136,7 @@ def main():
                             response = {
                                 "status": "confirmed", 
                                 "balance": payer.balance,
-                                "message": f"Transaction successful. User {payer.username} balance: {payer.balance}."
+                                "message": f"Transaction successful. User {payer.username} balance: {payer.balance} BTC."
                                 }
                             payer.update_transaction_status(transaction['tx_id'], "confirmed")
                         client_socket.send(pickle.dumps(response))

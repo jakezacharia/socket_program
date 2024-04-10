@@ -118,26 +118,27 @@ def send_transaction(s, user, transaction):
 
     print(f"Transaction {transaction['tx_id']} {response['status']}. Your current balance is {user.balance}.")
     
-def fetch_and_display_transactions(s, user):
-    # send request to the server
-    s.send(pickle.dumps({"action": "fetch_transactions", "username": user.username}))
-    # receive the response from the server
-    response = pickle.loads(s.recv(1024))
-    # update the user's balance and transactions
-    user.balance = response['balance']
-    user.transactions = response['transactions']
-    # display the transactions
-    for transaction in user.transactions:
-        print(f"Transaction ID: {transaction['tx_id']}")
-        print(f"Payer: {transaction['payer']}")
-        print(f"Amount Transferred: {transaction['amount_transferred']}")
-        print(f"Payee1: {transaction['payee1']}")
-        print(f"Amount Received1: {transaction['amount_received1']}")
-        if 'payee2' in transaction:
-            print(f"Payee2: {transaction['payee2']}")
-            print(f"Amount Received2: {transaction['amount_received2']}")
-        print(f"Status: {transaction['status']}")
-        print("------------------------")
+    #  dont need this anymore lol, just fetching txns from server during login session
+# def fetch_and_display_transactions(s, user):
+#     # send request to the server
+#     s.send(pickle.dumps({"action": "fetch_transactions", "username": user.username}))
+#     # receive the response from the server
+#     response = pickle.loads(s.recv(1024))
+#     # update the user's balance and transactions
+#     user.balance = response['balance']
+#     user.transactions = response['transactions']
+#     # display the transactions
+#     for transaction in user.transactions:
+#         print(f"Transaction ID: {transaction['tx_id']}")
+#         print(f"Payer: {transaction['payer']}")
+#         print(f"Amount Transferred: {transaction['amount_transferred']}")
+#         print(f"Payee1: {transaction['payee1']}")
+#         print(f"Amount Received1: {transaction['amount_received1']}")
+#         if 'payee2' in transaction:
+#             print(f"Payee2: {transaction['payee2']}")
+#             print(f"Amount Received2: {transaction['amount_received2']}")
+#         print(f"Status: {transaction['status']}")
+#         print("------------------------")
 # login function to authenticate user
 def login(s):
     # prompt user to enter username and password
@@ -158,7 +159,7 @@ def login(s):
         )
         print("=====================================")
         print("Authentication successful")
-        print(f"Your balance is {user.balance}")
+        print(f"Your balance is {user.balance} BTC")
         print("Your transaction history:")
         print("{:<20} {:<20} {:<20} {:<20} {:<20} {:<20} {:<20} {:<20}".format('tx_id', 'payer', 'amount_transferred', 'payee1', 'amount_received1', 'payee2', 'amount_received2', 'status'))
         for transaction in user.transactions:
@@ -207,7 +208,7 @@ def handle_authenticated_session(s, user):
             user.balance = response['balance']  # update user's balance
             print(response["message"])
         elif option == "2":
-            print(f"Your balance is {user.balance}")
+            print(f"Your balance is {user.balance} BTC.")
             print("Your transaction history:")
             print("{:<20} {:<20} {:<20} {:<20} {:<20} {:<20} {:<20} {:<20}".format('tx_id', 'payer', 'amount_transferred', 'payee1', 'amount_received1', 'payee2', 'amount_received2', 'status'))
             for transaction in user.transactions:
